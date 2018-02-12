@@ -4,21 +4,24 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 )
 
-func Login(data map[string]interface{}) (int, map[string]interface{}) {
-	if data["username"] == "golok" && data["password"] == "123456" {
+func Login(data ...interface{}) (int, map[string]interface{}) {
+	mapData := cast.ToStringMap(data[0])
+
+	if mapData["username"] == "golok" && mapData["password"] == "123456" {
 		return http.StatusOK, gin.H{
 			"error":   "false",
 			"message": "Welcome",
 			"status":  http.StatusOK,
-			"data":    gin.H{"username": data["username"], "password": data["password"]},
+			"data":    mapData,
 		}
-	} else {
-		return http.StatusUnauthorized, gin.H{
-			"error":   true,
-			"message": "Check username/password",
-			"status":  http.StatusUnauthorized,
-		}
+	}
+
+	return http.StatusUnauthorized, gin.H{
+		"error":   true,
+		"message": "Check username/password",
+		"status":  http.StatusUnauthorized,
 	}
 }

@@ -1,3 +1,3 @@
 package models
 
-type Controller func(data map[string]interface{}) (int, map[string]interface{})
+type Controller func(data ...interface{}) (int, map[string]interface{})
