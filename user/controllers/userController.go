@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cast"
 )
 
+// Login Check for user's username and password with a registered user in database
 func Login(data ...interface{}) (int, map[string]interface{}) {
 	mapData := cast.ToStringMap(data[0])
 
