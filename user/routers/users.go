@@ -10,5 +10,6 @@ func InitRoute(app *gin.Engine) {
 	user := app.Group("/user")
 	{
 		user.POST("/login", controllers.BaseController(controllers.Login))
+		user.POST("/register", controllers.BaseController(controllers.Register))
 	}
 }
