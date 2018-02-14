@@ -3,11 +3,11 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 
 	"../config"
 	"../models"
+	repo "../repositories"
 )
 
 // Login Check for user's username and password with a registered user in database
@@ -20,7 +20,7 @@ func Login(data ...interface{}) (int, map[string]interface{}) {
 
 	db.Where("username = ?", mapData["username"]).First(&user)
 	if user == (models.User{}) {
-		return http.StatusUnauthorized, gin.H{
+		return http.StatusUnauthorized, map[string]interface{}{
 			"error":   "true",
 			"status":  http.StatusUnauthorized,
 			"message": "User not found!",
@@ -28,14 +28,15 @@ func Login(data ...interface{}) (int, map[string]interface{}) {
 	}
 
 	if user.Password != mapData["password"] {
-		return http.StatusUnauthorized, gin.H{
+		return http.StatusUnauthorized, map[string]interface{}{
 			"error":   "true",
 			"status":  http.StatusUnauthorized,
 			"message": "Password doesn't match!",
 		}
 	}
 
-	return http.StatusOK, gin.H{
+	user.Password = ""
+	return http.StatusOK, map[string]interface{}{
 		"error":   "false",
 		"status":  http.StatusOK,
 		"message": "Login success, welcome " + user.Name,
@@ -45,18 +46,80 @@ func Login(data ...interface{}) (int, map[string]interface{}) {
 // Register Register a new user to database
 func Register(data ...interface{}) (int, map[string]interface{}) {
 	mapData := cast.ToStringMap(data[0])
-	db := config.OpenConnection()
-	defer db.Close()
 
-	user := models.User{
+	user := repo.Create(models.User{
 		Username: mapData["username"].(string),
 		Password: mapData["password"].(string),
 		Name:     mapData["name"].(string),
+	})
+
+	return http.StatusOK, map[string]interface{}{
+		"error":   false,
+		"status":  http.StatusOK,
+		"message": "Success",
+		"data":    user,
+	}
+}
+
+func Get(data ...interface{}) (int, map[string]interface{}) {
+	username := data[0].(string)
+	user := repo.FindUserByUsername(username)
+
+	if user == (models.User{}) {
+		return http.StatusNotFound, map[string]interface{}{
+			"error":   "true",
+			"status":  http.StatusNotFound,
+			"message": "User not found!",
+		}
 	}
 
-	db.Create(&user)
+	user.Password = ""
+	return http.StatusOK, map[string]interface{}{
+		"error":   false,
+		"status":  http.StatusOK,
+		"message": "Success",
+		"data":    user,
+	}
+}
 
-	return http.StatusOK, gin.H{
+func Update(data ...interface{}) (int, map[string]interface{}) {
+	username := data[0].(string)
+	body := cast.ToStringMap(data[1])
+
+	user := repo.FindUserByUsername(username)
+	if user == (models.User{}) {
+		return http.StatusNotFound, map[string]interface{}{
+			"error":   "true",
+			"status":  http.StatusNotFound,
+			"message": "User not found!",
+		}
+	}
+
+	repo.UpdateUser(&user, body)
+	user.Password = ""
+	return http.StatusOK, map[string]interface{}{
+		"error":   false,
+		"status":  http.StatusOK,
+		"message": "Success",
+		"data":    user,
+	}
+}
+
+func Delete(data ...interface{}) (int, map[string]interface{}) {
+	username := data[0].(string)
+
+	user := repo.FindUserByUsername(username)
+	if user == (models.User{}) {
+		return http.StatusNotFound, map[string]interface{}{
+			"error":   "true",
+			"status":  http.StatusNotFound,
+			"message": "User not found!",
+		}
+	}
+
+	repo.DeleteUser(user)
+	user.Password = ""
+	return http.StatusOK, map[string]interface{}{
 		"error":   false,
 		"status":  http.StatusOK,
 		"message": "Success",
