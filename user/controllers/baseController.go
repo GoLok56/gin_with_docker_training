@@ -8,16 +8,33 @@ import (
 	"../models"
 )
 
-func BaseController(controller models.Controller) func(c *gin.Context) {
+// BaseController A function that will return a handler for routes, also sending response to the client
+func BaseController(controller models.Controller, paramName ...string) func(c *gin.Context) {
 	return func(c *gin.Context) {
-		var body map[string]interface{}
+		var (
+			statusCode    int
+			requestMethod string
+			body, data    map[string]interface{}
+		)
+		requestMethod = c.Request.Method
+
 		err := c.ShouldBindJSON(&body)
-		if err != nil {
+
+		switch requestMethod {
+		case "GET", "DELETE":
+			statusCode, data = controller(c.Param(paramName[0]))
+		case "POST":
+			if err == nil {
+				statusCode, data = controller(body)
+			}
+		case "PUT":
+			if err == nil {
+				statusCode, data = controller(c.Param(paramName[0]), body)
+			}
+		default:
 			c.JSON(http.StatusBadRequest, err.Error)
-			return
 		}
 
-		statusCode, data := controller(body)
 		c.JSON(statusCode, data)
 	}
 }
