@@ -1,7 +1,7 @@
 package config
 
 import (
-	"../models"
+	"github.com/golok56/gin_with_docker_training/user/models"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -9,7 +9,7 @@ import (
 
 // OpenConnection Open a connection to mysql server
 func OpenConnection() *gorm.DB {
-	db, err := gorm.Open("mysql", "root:root@/gin_docker_train?parseTime=true")
+	db, err := gorm.Open("mysql", "root:root@db-training:5656/gin_docker_train?parseTime=true")
 	if err != nil {
 		panic(err.Error)
 	}

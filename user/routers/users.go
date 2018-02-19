@@ -3,7 +3,7 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 
-	"../controllers"
+	"github.com/golok56/gin_with_docker_training/user/controllers"
 )
 
 func InitRoute(app *gin.Engine) {

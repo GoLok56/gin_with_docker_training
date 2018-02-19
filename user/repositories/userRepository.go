@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"../config"
-	"../models"
+	"github.com/golok56/gin_with_docker_training/user/config"
+	"github.com/golok56/gin_with_docker_training/user/models"
 )
 
 func Create(user models.User) models.User {

@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cast"
 
-	"../config"
-	"../models"
-	repo "../repositories"
+	"github.com/golok56/gin_with_docker_training/user/config"
+	"github.com/golok56/gin_with_docker_training/user/models"
+	repo "github.com/golok56/gin_with_docker_training/user/repositories"
 )
 
 // Login Check for user's username and password with a registered user in database

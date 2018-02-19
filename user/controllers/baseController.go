@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"../models"
+	"github.com/golok56/gin_with_docker_training/user/models"
 )
 
 // BaseController A function that will return a handler for routes, also sending response to the client

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 
-	"./routers"
+	"github.com/golok56/gin_with_docker_training/user/routers"
 )
 
 const port = ":8001"
